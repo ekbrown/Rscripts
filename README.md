@@ -1,2 +1,2 @@
 # Rscripts
-A small collection of some helpful R script
+A collection of some of my R scripts.
