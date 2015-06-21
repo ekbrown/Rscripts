@@ -13,8 +13,8 @@
 
 # STEP 1:
 # Specify your credentials. This is the email you use to login to the corpus. If you're not sure which email you have registered, simply go to the Corpus in a web browser and try logging in to figure it out.
-login.email <- "ekbrown@ksu.edu"
-login.password <- "e7kjar7b"
+login.email <- "your.name@your.institution.edu"
+login.password <- "your.password"
 
 # STEP 2:
 # Specify the search string or strings. See the corpus in a web browser for help with search syntax, including part-of-speech tags and wildcards, etc. You can specify multiple search strings by putting them into a vector, like this: c("searchstring1", "searchstring2", "searchstring3")
