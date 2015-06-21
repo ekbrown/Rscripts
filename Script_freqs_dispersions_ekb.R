@@ -1,6 +1,6 @@
 # Script to get freq lists of words in a folder of text files
 
-# (c) 2012 Earl K. Brown ekbrown@ksu.edu
+# (c) 2015 Earl K. Brown ekbrown@ksu.edu
 # Stefan Th. Gries' function dispersions1 is used here in a modified form. The original is available from: http://www.linguistics.ucsb.edu/faculty/stgries/research/dispersion/_dispersion1.r
 # This script can be redistributed and modified for non-profit purposes
 
@@ -8,14 +8,14 @@
 rm(list=ls(all=T))
 
 ###########################################
-# SPECIFY THE FOLDER WITH THE TEXT FILES
-input.folder<-"/Users/earlbrown/Corpora/United_States/California/Salinas/Textos/Finished_Word"
+# SPECIFY THE DIRECTORY WITH THE TEXT FILES
+input.folder <- "/pathway/to/directory/with/texts"
 
-# SPECIFY THE FOLDER WHERE THE FREQUENCY LISTS SHOULD BE SAVED
-output.folder<-"/Users/earlbrown/Corpora/United_States/California/Salinas"
+# SPECIFY THE DIRECTORY WHERE THE FREQUENCY LISTS SHOULD BE SAVED
+output.folder <- "/pathway/to/directory/where/files/should/be/saved"
 
 # SPECIFY HOW MANY GRAMS TO INCLUDE IN EACH LIST; USE "-1" TO GET ALL POSSIBLE GRAMS
-num.grams = 212
+num.grams = 500
 ###########################################
 
 # defines ngram function

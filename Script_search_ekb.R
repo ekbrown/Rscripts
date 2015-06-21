@@ -1,6 +1,6 @@
 # Script to search for a list of words in a folder of text files
 
-# (c) 2012 Earl K. Brown ekbrown@ksu.edu
+# (c) 2015 Earl K. Brown ekbrown@ksu.edu
 # This script uses Stefan Th. Gries' function exact.matches, available at: http://www.linguistics.ucsb.edu/faculty/stgries/exact_matches.r
 # This script can be redistributed and modified for non-profit purposes
 
@@ -8,11 +8,11 @@
 rm(list=ls(all=T))
 
 #############################################
-# SPECIFY THE FOLDER WITH THE TEXTS
-input.folder<-"/Users/earlbrown/Documents/Theses/Janae_Haskell/texts"
+# SPECIFY THE DIRECTORY WITH THE TEXTS
+input.folder<-"/pathway/to/directory/with/texts"
 
-# SPECIFY THE FILE INTO WHICH THE SEARCH RESULTS SHOULD BE SAVED
-output.file<-"/Users/earlbrown/Documents/Theses/Janae_Haskell/search_results.txt"
+# SPECIFY THE FILE (NOT THE DIRECTORY) INTO WHICH THE SEARCH RESULTS SHOULD BE SAVED
+output.file<-"/pathway/to/file/search_results.txt"
 
 # SPECIFY THE WORDS TO BE SEARCHED FOR
 search.words<-c("have to", "got to", "need to", "should", "must", "\\'ve")

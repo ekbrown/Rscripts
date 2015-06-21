@@ -1,6 +1,6 @@
 # Script to retrieve the collocates of a list of words in a folder of text files
 
-# (c) 2012 Earl K. Brown ekbrown@ksu.edu
+# (c) 2015 Earl K. Brown ekbrown@ksu.edu
 # A lot of the code was written by Stefan Th. Gries
 # This script can be redistributed and modified for non-profit purposes
 
@@ -8,11 +8,11 @@
 rm(list=ls(all=T))
 
 #############################################
-# SPECIFY THE FOLDER WITH THE TEXTS
-input.folder<-"/Users/earlbrown/Corpora/United_States/California/Salinas/Textos/Finished_Word"
+# SPECIFY THE DIRECTORY WITH THE TEXTS
+input.folder <- "/pathway/to/directory/with/texts"
 
-# SPECIFY WHERE THE COLLOCATE FILES SHOULD BE SAVED
-output.folder<-"/Users/earlbrown/Corpora/United_States/California/Salinas"
+# SPECIFY THE DIRECTORY IN WHICH THE COLLOCATE FILES SHOULD BE SAVED
+output.folder <- "/pathway/to/directory/where/files/should/be/saved"
 
 # SPECIFY THE WORDS WHOSE COLLOCATES SHOULD BE SEARCH FOR
 search.terms<-c("need to", "have to", "must", "high school", "libro", "capstone", "antes de que")
