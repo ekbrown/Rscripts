@@ -15,14 +15,18 @@ rm(list = ls(all = T))
 
 ##################
 # SPECIFY THE DIRECTORY WITH THE TEXT FILES
-input.folder <- "/pathway/to/directory/with/texts"
+# input.folder <- "/pathway/to/directory/with/texts"
 
 # SPECIFY THE DIRECTORY WHERE THE FREQUENCY LISTS SHOULD BE SAVED
-output.folder <- "/pathway/to/directory/where/files/should/be/saved"
+# output.folder <- "/pathway/to/directory/where/files/should/be/saved"
 
 # SPECIFY HOW MANY GRAMS TO INCLUDE IN EACH LIST; USE "-1" TO GET ALL POSSIBLE GRAMS
-num.grams = 1000
+num.grams = 500
 ##################
+
+input.folder <- "/Users/earlbrown/Corpora/United_States/California/Salinas/Textos/Finished"
+output.folder <- "/Users/earlbrown/Documents"
+
 
 # DON'T CHANGE ANYTHING BELOW HERE, UNLESS YOU KNOW WHAT YOU'RE DOING
 
@@ -118,21 +122,21 @@ create.ngrams <- function(corpus.lines, num.words = 2) {
 dispersions1 <- function(corpus, corpus.part.sizes, element) {
 
 	if(sum(corpus.part.sizes) != length(corpus)) stop("The sum of the sizes of the corpus parts is not identical to the corpus size!")
-  corpus.parts <- rep(1:length(corpus.part.sizes), corpus.part.sizes)
+  corpus.parts <- rep.int(1:length(corpus.part.sizes), corpus.part.sizes)
 
 	n <- length(corpus.part.sizes)
 	l <- length(corpus)
 	f <- num_matches(corpus, element)
 	if(f==0) { return("NA"); break() }
-	s <- corpus.part.sizes/l # s
-	v <- rowsum(match_or_not(corpus, element), corpus.parts)
-	
+	s <- corpus.part.sizes / l
+  v <- as.integer(rowsum(match_or_not(corpus, element), corpus.parts))
+
 	values <- list()	
 	values[["element"]] <- element
-	values[["range"]] <- sum(v>0)
-	values[["Deviation of proportions DP"]] <- sum(abs((v/f)-s))/2 # Gries
-	values[["Deviation of proportions DP (normalized)"]] <- (sum(abs((v/f)-s))/2)/(1-min(s))
-
+	values[["range"]] <- sum(v > 0)
+	values[["Deviation of proportions DP"]] <- sum(abs((v / f) - s)) / 2  # Gries
+	values[["Deviation of proportions DP (normalized)"]] <- (sum(abs((v / f) - s)) / 2) / (1 - min(s))
+	
 	return(values)
 } # end defining function "dispersions1"
 
@@ -145,7 +149,6 @@ how.many.grams <- function(number.grams, len.grams) {
 		how.many.grams <- number.grams
 	}
 	return(how.many.grams)
-
 } # end defining function
 
 ##################
@@ -257,7 +260,7 @@ for (i in 1:num.grams.to.extract) {
 		all.range.dp <- data_frame()
 
 	} # end of if this is a 100th iteration
-	
+
 	# gets range and Gries' DP dispersion measurement
 	word.dispersion <- dispersions1(single.data, single.numbers, names(raw.freq)[i])
 
