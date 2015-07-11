@@ -15,13 +15,15 @@ rm(list = ls(all = T))
 
 ##################
 # SPECIFY THE DIRECTORY WITH THE TEXT FILES
-input.folder <- "/pathway/to/directory/with/texts"
+# input.folder <- "/pathway/to/directory/with/texts"
+input.folder <- "/Users/earlbrown/Corpora/United_States/California/Salinas/Textos/Finished"
 
 # SPECIFY THE DIRECTORY WHERE THE FREQUENCY LISTS SHOULD BE SAVED
-output.folder <- "/pathway/to/directory/where/files/should/be/saved"
+# output.folder <- "/pathway/to/directory/where/files/should/be/saved"
+output.folder <- "/Users/earlbrown/Documents"
 
 # SPECIFY HOW MANY GRAMS TO INCLUDE IN EACH LIST; USE "-1" TO GET ALL POSSIBLE GRAMS
-num.grams = 1000
+num.grams = 5000
 ##################
 
 # DON'T CHANGE ANYTHING BELOW HERE, UNLESS YOU KNOW WHAT YOU'RE DOING
@@ -36,36 +38,7 @@ library("stringr")
 library("dplyr")
 
 ##
-# defines ngram function
-create.ngrams <- function(corpus.lines, num.words = 2, combiner = " ") {
-			
-  corpus.lines <- cur.file
-  
-	# put spaces around punctuation that likely represents a pause
-	corpus.lines <- str_replace_all(corpus.lines, "([\\.\\,\\?\\!\\:\\;])", " \\1 ")
-	
-	#split up into individual words and punctuation
-	corpus.words <- unlist(str_split(str_to_lower(corpus.lines), "\\s+"), use.names = F)
-	
-	#exclude empty elements
-	corpus.words <- corpus.words[str_length(corpus.words) > 0]
-	
-	# gets ngrams
-	all.ngrams <- apply(
-	  mapply(
-	    seq, 1:(length(corpus.words) - num.words + 1), num.words:length(corpus.words)), 2, function(q) paste(corpus.words[q], collapse=combiner
-    ) # end mapply
-	) # end apply
-
-	# exclude grams with punctuation
-	all.ngrams <- all.ngrams[!str_detect(all.ngrams, "[\\;|\\:|\\.|\"|\\?|\\[|\\]|\\,|\\(|\\)|\\!|&|/|\\\\|\\’]")]
-	
-	return(all.ngrams)
-	
-} # end defining word gram function
-
-##
-# defines two C++ functions
+# defines C++ functions
 cppFunction('
   int num_matches(CharacterVector corpus, String word) {
     int n = corpus.size();
@@ -73,12 +46,12 @@ cppFunction('
     String cur_wd;
     for (int i = 0; i < n; i++) {
       cur_wd = corpus[i];
-        if (cur_wd == word) {
-          cur_num++;
-        }
+      if (cur_wd == word) {
+        cur_num++;
       }
-      return cur_num;
     }
+    return cur_num;
+  }
 ')
 
 cppFunction('
@@ -97,6 +70,48 @@ cppFunction('
     return output;
   }
 ')
+
+cppFunction('
+  std::vector<std::string> get_ngrams(std::vector<std::string> words, int grams) {
+    int n = words.size();
+    int offset = grams - 1;
+    std::vector<std::string> output(n - offset);
+    for (int i = 0; i < n - offset; i++) {
+      std::string first_wd = words[i];
+      std::string second_wd = words[i + 1];
+      if (grams == 3) {
+        std::string third_wd = words[i + 2];
+        output[i] = first_wd + " " + second_wd + " " + third_wd;
+      } else {
+        output[i] = first_wd + " " + second_wd;
+      }
+    }
+    return output;
+  }
+')
+
+##
+# defines ngram function
+create.ngrams <- function(corpus.lines, num.words = 2) {
+
+	# put spaces around punctuation that likely represents a pause
+	corpus.lines <- str_replace_all(corpus.lines, "([\\.\\,\\?\\!\\:\\;])", " \\1 ")
+	
+	#split up into individual words and punctuation
+	corpus.words <- unlist(str_split(str_to_lower(corpus.lines), "\\s+"), use.names = F)
+	
+	#exclude empty elements
+	corpus.words <- corpus.words[str_length(corpus.words) > 0]
+	
+	# gets ngrams
+  all.ngrams <- get_ngrams(corpus.words, num.words)
+
+	# exclude grams with punctuation
+	all.ngrams <- all.ngrams[!str_detect(all.ngrams, "[\\;|\\:|\\.|\"|\\?|\\[|\\]|\\,|\\(|\\)|\\!|&|/|\\\\|\\’]")]
+	
+	return(all.ngrams)
+	
+} # end defining word gram function
 
 ##
 # defines a simplified version of Stefan Th. Gries' function "dispersions1"
@@ -396,4 +411,3 @@ cat("\a\nAll done!\nThree frequency lists have been created and are located in t
 end.time <- strptime(date(), format = "%a %b %d %H:%M:%S %Y")
 dd <- difftime(end.time, start.time)
 cat("The script took", round(dd, 1), attr(dd, "units"), "\n")
-
