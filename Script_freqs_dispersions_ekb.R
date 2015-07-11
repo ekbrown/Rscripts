@@ -21,12 +21,8 @@ rm(list = ls(all = T))
 # output.folder <- "/pathway/to/directory/where/files/should/be/saved"
 
 # SPECIFY HOW MANY GRAMS TO INCLUDE IN EACH LIST; USE "-1" TO GET ALL POSSIBLE GRAMS
-num.grams = 500
+num.grams = 1000
 ##################
-
-input.folder <- "/Users/earlbrown/Corpora/United_States/California/Salinas/Textos/Finished"
-output.folder <- "/Users/earlbrown/Documents"
-
 
 # DON'T CHANGE ANYTHING BELOW HERE, UNLESS YOU KNOW WHAT YOU'RE DOING
 
