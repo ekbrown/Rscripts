@@ -15,15 +15,13 @@ rm(list = ls(all = T))
 
 ##################
 # SPECIFY THE DIRECTORY WITH THE TEXT FILES
-# input.folder <- "/pathway/to/directory/with/texts"
-input.folder <- "/Users/earlbrown/Corpora/United_States/California/Salinas/Textos/Finished"
+input.folder <- "/pathway/to/directory/with/texts"
 
 # SPECIFY THE DIRECTORY WHERE THE FREQUENCY LISTS SHOULD BE SAVED
-# output.folder <- "/pathway/to/directory/where/files/should/be/saved"
-output.folder <- "/Users/earlbrown/Documents"
+output.folder <- "/pathway/to/directory/where/files/should/be/saved"
 
 # SPECIFY HOW MANY GRAMS TO INCLUDE IN EACH LIST; USE "-1" TO GET ALL POSSIBLE GRAMS
-num.grams = 5000
+num.grams = 1000
 ##################
 
 # DON'T CHANGE ANYTHING BELOW HERE, UNLESS YOU KNOW WHAT YOU'RE DOING
