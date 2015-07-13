@@ -5,9 +5,6 @@
 
 # Stefan Th. Gries' function dispersions1 is used here in a modified form. The original is available from: http://www.linguistics.ucsb.edu/faculty/stgries/research/dispersion/_dispersion1.r
 
-# clears the working memory
-rm(list = ls(all = T))
-
 #####
 # NOTE:
 # This script requires four packages not included in base R. If you don't already have the following packages on your computer, uncomment the next line (remove the hash tag) and run that one line, and then comment it again (put the hash tag back)
@@ -15,10 +12,10 @@ rm(list = ls(all = T))
 
 ##################
 # SPECIFY THE DIRECTORY WITH THE TEXT FILES
-# input.folder <- "/pathway/to/directory/with/texts"
+input.folder <- "/pathway/to/directory/with/texts"
 
 # SPECIFY THE DIRECTORY WHERE THE FREQUENCY LISTS SHOULD BE SAVED
-# output.folder <- "/pathway/to/directory/where/files/should/be/saved"
+output.folder <- "/pathway/to/directory/where/files/should/be/saved"
 
 # SPECIFY HOW MANY GRAMS TO INCLUDE IN EACH LIST; USE "-1" TO GET ALL POSSIBLE GRAMS
 num.grams = 1000
@@ -102,7 +99,7 @@ create.ngrams <- function(corpus.lines, num.words = 2) {
 	corpus.words <- corpus.words[str_length(corpus.words) > 0]
 	
 	# gets ngrams
-  all.ngrams <- get_ngrams(corpus.words, num.words)
+	all.ngrams <- get_ngrams(corpus.words, num.words)
 
 	# exclude grams with punctuation
 	all.ngrams <- all.ngrams[!str_detect(all.ngrams, "[\\;|\\:|\\.|\"|\\?|\\[|\\]|\\,|\\(|\\)|\\!|&|/|\\\\|\\’]")]
@@ -125,7 +122,7 @@ dispersions1 <- function(corpus, corpus.part.sizes, element) {
 	f <- num_matches(corpus, element)
 	if(f==0) { return("NA"); break() }
 	s <- corpus.part.sizes / l
-  v <- as.integer(rowsum(match_or_not(corpus, element), corpus.parts))
+	v <- as.integer(rowsum(match_or_not(corpus, element), corpus.parts))
 
 	values <- list()	
 	values[["element"]] <- element
