@@ -12,15 +12,13 @@
 
 ##################
 # SPECIFY THE DIRECTORY WITH THE TEXT FILES
-# input.folder <- "/pathway/to/directory/with/texts"
-input.folder <- "/Users/earlbrown/Corpora/United_States/California/Salinas/Textos/Finished"
+input.folder <- "/pathway/to/directory/with/texts"
 
 # SPECIFY THE DIRECTORY WHERE THE FREQUENCY LISTS SHOULD BE SAVED
-# output.folder <- "/pathway/to/directory/where/files/should/be/saved"
-output.folder <- "/Users/earlbrown/Desktop"
+output.folder <- "/pathway/to/directory/where/files/should/be/saved"
 
 # SPECIFY HOW MANY GRAMS TO INCLUDE IN EACH LIST; USE "-1" TO GET ALL POSSIBLE GRAMS
-num.grams = 500
+num.grams = 1000
 ##################
 
 # DON'T CHANGE ANYTHING BELOW HERE, UNLESS YOU KNOW WHAT YOU'RE DOING
@@ -113,7 +111,7 @@ create.ngrams <- function(corpus.lines, num.words = 2) {
 } # end defining word gram function
 
 ## defines a slightly faster rowsum()
-faster_rowsum <- function (x, group, ugroup, na.rm = FALSE, ...) {
+fast_rowsum <- function (x, group, ugroup, na.rm = FALSE, ...) {
   .Internal(rowsum_matrix(x, group, ugroup, na.rm, as.character(ugroup)))
 }
 
@@ -124,28 +122,15 @@ faster_rowsum <- function (x, group, ugroup, na.rm = FALSE, ...) {
 # dispersions1 <- function(corpus, corpus.part.sizes, element) {
 dispersions1 <- function(corpus, corpus.part.sizes, element, corpus.parts, ugroup) {
   
-#   corpus <- single.data
-#   corpus.part.sizes <- single.numbers
-#   element <- names(raw.freq)[i]
-  
 	if(sum(corpus.part.sizes) != length(corpus)) stop("The sum of the sizes of the corpus parts is not identical to the corpus size!")
   corpus.parts <- rep.int(1:length(corpus.part.sizes), corpus.part.sizes)
 
-#   file.numbers.repeated <- rep.int(1:length(single.numbers), single.numbers)
-#   unique.file.numbers <- sort(unique(file.numbers.repeated), na.last = TRUE, method = "quick")
-  
 	n <- length(corpus.part.sizes)
 	l <- length(corpus)
 	f <- num_matches(corpus, element)
 	if(f==0) { return("NA"); break() }
 	s <- corpus.part.sizes / l
-	# v <- as.integer(rowsum(match_or_not(corpus, element), corpus.parts))
-
-# 	microbenchmark(
-# 	  v1 <- as.integer(rowsum(match_or_not(corpus, element), corpus.parts)),
-	    v <- as.integer(faster_rowsum(match_or_not(corpus, element), corpus.parts, ugroup))
-# 	  times = 100
-# 	)
+  v <- as.integer(fast_rowsum(match_or_not(corpus, element), corpus.parts, ugroup))
 
 	values <- list()	
 	values[["element"]] <- element
