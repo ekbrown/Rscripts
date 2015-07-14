@@ -12,13 +12,15 @@
 
 ##################
 # SPECIFY THE DIRECTORY WITH THE TEXT FILES
-input.folder <- "/pathway/to/directory/with/texts"
+# input.folder <- "/pathway/to/directory/with/texts"
+input.folder <- "/Users/earlbrown/Corpora/United_States/California/Salinas/Textos/Finished"
 
 # SPECIFY THE DIRECTORY WHERE THE FREQUENCY LISTS SHOULD BE SAVED
-output.folder <- "/pathway/to/directory/where/files/should/be/saved"
+# output.folder <- "/pathway/to/directory/where/files/should/be/saved"
+output.folder <- "/Users/earlbrown/Desktop"
 
 # SPECIFY HOW MANY GRAMS TO INCLUDE IN EACH LIST; USE "-1" TO GET ALL POSSIBLE GRAMS
-num.grams = 1000
+num.grams = 500
 ##################
 
 # DON'T CHANGE ANYTHING BELOW HERE, UNLESS YOU KNOW WHAT YOU'RE DOING
@@ -74,11 +76,11 @@ cppFunction('
     for (int i = 0; i < n - offset; i++) {
       std::string first_wd = words[i];
       std::string second_wd = words[i + 1];
-      if (grams == 3) {
+      if (grams == 2) {
+        output[i] = first_wd + " " + second_wd;
+      } else {
         std::string third_wd = words[i + 2];
         output[i] = first_wd + " " + second_wd + " " + third_wd;
-      } else {
-        output[i] = first_wd + " " + second_wd;
       }
     }
     return output;
@@ -89,6 +91,8 @@ cppFunction('
 # defines ngram function
 create.ngrams <- function(corpus.lines, num.words = 2) {
 
+  corpus.lines <- cur.file
+  
 	# put spaces around punctuation that likely represents a pause
 	corpus.lines <- str_replace_all(corpus.lines, "([\\.\\,\\?\\!\\:\\;])", " \\1 ")
 	
@@ -108,21 +112,40 @@ create.ngrams <- function(corpus.lines, num.words = 2) {
 	
 } # end defining word gram function
 
+## defines a slightly faster rowsum()
+faster_rowsum <- function (x, group, ugroup, na.rm = FALSE, ...) {
+  .Internal(rowsum_matrix(x, group, ugroup, na.rm, as.character(ugroup)))
+}
+
 ##
 # defines a simplified version of Stefan Th. Gries' function "dispersions1"
 # please cite: Gries, Stefan Th. 2008. Dispersions and adjusted frequencies in corpora. /International Journal of Corpus Linguistics/ 13(4). 403-437.
 
-dispersions1 <- function(corpus, corpus.part.sizes, element) {
-
+# dispersions1 <- function(corpus, corpus.part.sizes, element) {
+dispersions1 <- function(corpus, corpus.part.sizes, element, corpus.parts, ugroup) {
+  
+#   corpus <- single.data
+#   corpus.part.sizes <- single.numbers
+#   element <- names(raw.freq)[i]
+  
 	if(sum(corpus.part.sizes) != length(corpus)) stop("The sum of the sizes of the corpus parts is not identical to the corpus size!")
   corpus.parts <- rep.int(1:length(corpus.part.sizes), corpus.part.sizes)
 
+#   file.numbers.repeated <- rep.int(1:length(single.numbers), single.numbers)
+#   unique.file.numbers <- sort(unique(file.numbers.repeated), na.last = TRUE, method = "quick")
+  
 	n <- length(corpus.part.sizes)
 	l <- length(corpus)
 	f <- num_matches(corpus, element)
 	if(f==0) { return("NA"); break() }
 	s <- corpus.part.sizes / l
-	v <- as.integer(rowsum(match_or_not(corpus, element), corpus.parts))
+	# v <- as.integer(rowsum(match_or_not(corpus, element), corpus.parts))
+
+# 	microbenchmark(
+# 	  v1 <- as.integer(rowsum(match_or_not(corpus, element), corpus.parts)),
+	    v <- as.integer(faster_rowsum(match_or_not(corpus, element), corpus.parts, ugroup))
+# 	  times = 100
+# 	)
 
 	values <- list()	
 	values[["element"]] <- element
@@ -228,8 +251,13 @@ single.data <- read_csv("single_words.csv", col_names = F)
 # converts data from data frames to vectors
 single.data <- as.data.frame(single.data)[, 1]
 
+file.numbers.repeated <- rep.int(1:length(single.numbers), single.numbers)
+unique.file.numbers <- sort(unique(file.numbers.repeated), na.last = TRUE, method = "quick")
+
 # gets frequencies
 raw.freq <- sort(table(single.data), decreasing = T)
+# POSSIBLY REPLACE THIS "table" FUNCTION WITH ONE WRITTEN IN C++
+
 log.freq <- round(log(raw.freq), 3)
 norm.freq <- round((raw.freq / sum(raw.freq)) * 1000000, 3)
 
@@ -255,8 +283,9 @@ for (i in 1:num.grams.to.extract) {
 	} # end of if this is a 100th iteration
 
 	# gets range and Gries' DP dispersion measurement
-	word.dispersion <- dispersions1(single.data, single.numbers, names(raw.freq)[i])
-
+	# word.dispersion <- dispersions1(single.data, single.numbers, names(raw.freq)[i])
+	word.dispersion <- dispersions1(single.data, single.numbers, names(raw.freq)[i], file.numbers.repeated, unique.file.numbers)
+	
 	cur.range <- word.dispersion$range
 	cur.range.perc <- round((cur.range/length(corpus.files)) * 100, digits = 2)
 	cur.dp <- round(word.dispersion$'Deviation of proportions DP', 5)
@@ -286,8 +315,11 @@ cat("\nWorking on creating the frequency list of bigrams...\n")
 # retrieves bigram words from temp file
 bigram.data <- read_csv("bigram_words.csv", col_names = F)
 
-# converts data from data frames to vectors
+# converts data from data frame to vectors
 bigram.data <- as.data.frame(bigram.data)[, 1]
+
+file.numbers.repeated <- rep.int(1:length(bigram.numbers), bigram.numbers)
+unique.file.numbers <- sort(unique(file.numbers.repeated), na.last = TRUE, method = "quick")
 
 # gets frequencies
 raw.freq <- sort(table(bigram.data), decreasing = T)
@@ -317,7 +349,9 @@ for (i in 1:num.grams.to.extract) {
 	} # end of if this is a 100th iteration
 	
 	# gets range and Gries' DP dispersion measurement
-	word.dispersion <- dispersions1(bigram.data, bigram.numbers, names(raw.freq)[i])
+	# word.dispersion <- dispersions1(bigram.data, bigram.numbers, names(raw.freq)[i])
+	word.dispersion <- dispersions1(bigram.data, bigram.numbers, names(raw.freq)[i], file.numbers.repeated, unique.file.numbers)
+	
 	cur.range <- word.dispersion$range
 	cur.range.perc <- round((cur.range/length(corpus.files)) * 100, 2)
 	cur.dp <- round(word.dispersion$'Deviation of proportions DP', 5)
@@ -347,8 +381,11 @@ cat("\nWorking on creating the frequency list of trigrams...\n")
 # retrieves bigram words from temp file
 trigram.data <- read_csv("trigram_words.csv", col_names = F)
 
-# converts data from data frames to vectors
+# converts data from data frame to vectors
 trigram.data <- as.data.frame(trigram.data)[, 1]
+
+file.numbers.repeated <- rep.int(1:length(trigram.numbers), trigram.numbers)
+unique.file.numbers <- sort(unique(file.numbers.repeated), na.last = TRUE, method = "quick")
 
 # gets frequencies
 raw.freq <- sort(table(trigram.data), decreasing=T)
@@ -378,7 +415,9 @@ for (i in 1:num.grams.to.extract) {
 	} # end of if this is a 100th iteration
 	
 	# gets range and Gries' DP dispersion measurement
-	word.dispersion <- dispersions1(trigram.data, trigram.numbers, names(raw.freq)[i])
+	# word.dispersion <- dispersions1(trigram.data, trigram.numbers, names(raw.freq)[i])
+	word.dispersion <- dispersions1(trigram.data, trigram.numbers, names(raw.freq)[i], file.numbers.repeated, unique.file.numbers)
+	
 	cur.range <- word.dispersion$range
 	cur.range.perc <- round((cur.range/length(corpus.files)) * 100, 2)
 	cur.dp <- round(word.dispersion$'Deviation of proportions DP', 5)
