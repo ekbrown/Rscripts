@@ -12,10 +12,10 @@
 
 ##################
 # SPECIFY THE DIRECTORY WITH THE TEXT FILES
-input.folder <- "/pathway/to/directory/with/texts"
+input.folder <- "/Users/ekb5/Documents/Visit_to_Albuquerque/txt"
 
 # SPECIFY THE DIRECTORY WHERE THE FREQUENCY LISTS SHOULD BE SAVED
-output.folder <- "/pathway/to/directory/where/files/should/be/saved"
+output.folder <- "/Users/ekb5/Documents/Visit_to_Albuquerque"
 
 # SPECIFY HOW MANY GRAMS TO INCLUDE IN EACH LIST; USE "-1" TO GET ALL POSSIBLE GRAMS
 num.grams = 1000
@@ -146,6 +146,8 @@ dispersions1 <- function(corpus, corpus.part.sizes, element, corpus.parts, ugrou
 how.many.grams <- function(number.grams, len.grams) {
 	if (number.grams == -1) {
 		how.many.grams <- len.grams
+	} else if (len.grams < number.grams) {
+	  how.many.grams <- len.grams
 	} else {
 		how.many.grams <- number.grams
 	}
@@ -189,7 +191,8 @@ for (i in 1:length(corpus.files)) {
 	}
 	
 	# loads corpus file and makes it lower-case
-	cur.file <- str_to_lower(read_lines(cur.name))
+	# cur.file <- str_to_lower(read_lines(cur.name))
+	cur.file <- str_to_lower(scan(cur.name, what = "char", sep = "\n", fileEncoding = "UTF-16", quiet = T))
 
 	# delete the annotations that aren't part of the speech of the speakers
 	cur.file <- str_replace(cur.file, "^[^:]*:", "")
