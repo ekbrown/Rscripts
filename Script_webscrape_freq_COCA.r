@@ -7,7 +7,7 @@ library("tidyverse")
 
 get_freq_coca <- function(email, password, section, wds, outfile) {
     
-    # param email: string, with email with which the user accesses the Davies corpus;
+    # param email: string, with email with which the user accesses the Davies corpora;
     # param password: string, with associated password (double check with web browser);
     # param section: string, the section in the COCA to get frequencies from, from among 'all', 'spok', 'fict', 'mag', 'news', 'acad';
     # param wds: vector of strings, with words to retrieve the frequencies of;
